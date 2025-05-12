@@ -10,7 +10,6 @@ import {Playfair} from "next/font/google";
 
 const playfairDisplay = Playfair({
   variable: "--font-playfair-display",
-  weight: "800",
   subsets: ["latin"],
 });
 
@@ -67,12 +66,47 @@ export default async function HomePage() {
         <ImageCarousel images={images} />
       </div>
       <div className="content mb-10">
+        <Events />
         <div className="md:container md:mx-auto">
-          <h1 className={`${playfairDisplay.className} antialiased text-6xl font-bold text-center mb-10`}>
+          <h1 className={`${playfairDisplay.variable} antialiased`}>
             Upcoming Tours
           </h1>
-          <div className="events">
-            <Events />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+            {events.map((event) => (
+              <div
+                key={event.id}
+                className="bg-white p-4 shadow-sm border-1 border-solid border-slate-200"
+              >
+                {event.logo && (
+                  <Link href={`/events/${event.id}`} className="block">
+                    <img
+                      src={event.logo.url}
+                      alt={event.name.text}
+                      className="w-full h-48 object-cover mb-4"
+                    />
+                  </Link>
+                )}
+                <Link href={`/events/${event.id}`} className="block">
+                  <h2 className="text-xl font-semibold mb-2">
+                    {event.name.text}
+                  </h2>
+                </Link>
+                <p className="text-sm text-gray-600 mb-4">
+                  {new Date(event.start.local).toLocaleString()}
+                </p>
+                <p className="text-gray-700 line-clamp-4 mb-4">
+                  {event.description.text}
+                </p>
+                <a
+                  href={`/events/${event.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 transition"
+                >
+                  Learn More
+                </a>
+              </div>
+            ))}
           </div>
         </div>
       </div>
