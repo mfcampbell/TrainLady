@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import {Playfair} from "next/font/google";
+import Image from 'next/image';
 
 const playfairDisplay = Playfair({
   variable: "--font-playfair-display",
@@ -49,7 +50,7 @@ export default function EventbriteEvents() {
       {events.map((event) => (
         <div key={event.id} className="bg-white shadow-md rounded-lg p-4">
           {event.logo?.url && (
-            <img
+            <Image
               src={event.logo.url}
               alt={event.name.text}
               className="w-full h-48 object-cover rounded"

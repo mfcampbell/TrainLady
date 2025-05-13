@@ -1,6 +1,7 @@
 // app/events/[id]/page.tsx
 import { notFound } from "next/navigation";
 import Link from 'next/link';
+import Image from 'next/image';
 
 type EventbriteEvent = {
   id: string;
@@ -43,7 +44,7 @@ export default async function EventPage({
     <Link href="/" className="text-blue-600 hover:underline mb-4 inline-block">← Back</Link>
       <div className="image-container">
         {event.logo?.url && (
-          <img
+          <Image
             src={event.logo.url}
             alt={event.name.text}
             className="mb-6 rounded-xl w-full"

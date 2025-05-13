@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import Image from 'next/image';
 
 interface CarouselImage {
   src: string;
@@ -61,7 +62,7 @@ export default function ImageCarousel({ images, interval = 7500 }: ImageCarousel
             idx === current ? 'opacity-100 relative z-10' : 'opacity-0'
           }`}
         >
-          <img
+          <Image
             src={image.src}
             alt={image.title ?? `Slide ${idx + 1}`}
             className="w-full h-[500px] object-cover"
