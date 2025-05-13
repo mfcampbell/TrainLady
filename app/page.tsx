@@ -1,6 +1,5 @@
 // app/page.tsx
 import React from "react";
-import Link from "next/link";
 import Events from '@/components/Events';
 import ImageCarousel from "@/components/ImageCarousel";
 import Navbar from '@/components/Navbar';
@@ -9,7 +8,6 @@ import LoadingScreen from '@/components/LoadingScreen';
 import {Playfair} from "next/font/google";
 
 const playfairDisplay = Playfair({
-  variable: "--font-playfair-display",
   weight: "800",
   subsets: ["latin"],
 });
