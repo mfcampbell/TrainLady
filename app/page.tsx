@@ -22,8 +22,6 @@ type EventbriteEvent = {
 };
 
 async function getEvents(): Promise<EventbriteEvent[]> {
-  console.log("Loaded token:", process.env.EVENTBRITE_TOKEN);
-
   const res = await fetch(
     "https://www.eventbriteapi.com/v3/organizations/2753828311591/events/?token=",
     {
