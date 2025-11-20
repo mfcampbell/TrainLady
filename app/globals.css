@@ -1,8 +1,13 @@
 @import "tailwindcss";
+@import "keen-slider/keen-slider.min.css";
+@import 'leaflet/dist/leaflet.css';
 
 :root {
-  --background: #ffffff;
+  --background: #fefceb;
   --foreground: #171717;
+  --green: rgba(69, 100, 68, 1);
+  --butter: #fefceb;
+  --black: rgba(28,28,28,1);
 }
 
 @theme inline {
@@ -12,15 +17,97 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
+  color: var(--black);
+}
+
+.navbar {
+  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+.fc-view {
+  background: #fff;
+}
+
+
+.upcoming-tours .event-details {
+  color:rgba(69, 100, 68, 1);
+}
+
+.bg-leaf {
+  background: rgba(69, 100, 68, 1);
+  color: #fefceb;
+}
+
+.bg-butter {
+ background:#fefceb;
+  color:rgba(69, 100, 68, 1);
+  
+}
+
+.footer {
+  background: var(--black);
+  color: var(--butter);
+}
+
+.trip-button {
+  background: rgba(69, 100, 68, 1);
+  color: var(--butter);
+  font-weight:bold;
+} 
+
+.trip-button:hover {
+  background: rgba(69, 100, 68, 0.8);
+  cursor: pointer;
+}
+.trip-button:focus {
+  background: rgba(69, 100, 68, 0.6);
+}
+.upcoming-tours .event-details p {
+  color: rgba(69, 100, 68, 1);
+}
+
+.upcoming-tours .event-details h2 {
+  color:rgba(69, 100, 68, 1);
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  background: rgba(69, 100, 68, 0.2);
+}
+
+.fc .fc-button-primary {
+  background: rgba(69, 100, 68, 1);
+  color: var(--butter);
+}
+.faq-button {
+  background: rgba(69, 100, 68, 1);
+  color: var(--butter);
+}
+.faq-button:hover {
+  background: rgba(69, 100, 68, 0.8);
+}
+.faq-button:focus {
+  background: rgba(69, 100, 68, 0.6);
+}
+
+.footer-link:hover {
+  color: var(--butter);
+  text-decoration: underline;
+}
+
+.fc-toolbar-chunk:last-child {
+  display:none; 
+}
+
+.fc-h-event {
+  color: var(--butter);
+  background: var(--green)
+}
+
+.fc .fc-toolbar-title {
+    font-size: 1rem;
+    margin: 0px;
+    font-weight: bold;
 }

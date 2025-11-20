@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
-import Image from 'next/image';
 
 interface CarouselImage {
   src: string;
@@ -62,18 +61,11 @@ export default function ImageCarousel({ images, interval = 7500 }: ImageCarousel
             idx === current ? 'opacity-100 relative z-10' : 'opacity-0'
           }`}
         >
-          <Image
+          <img
             src={image.src}
             alt={image.title ?? `Slide ${idx + 1}`}
-            className="w-full h-[500px] object-cover"
+            className="w-full h-[300px] md:h-[500px] object-cover object-center"
           />
-          {/* Caption */}
-          {(image.title || image.description) && (
-            <div className="absolute bottom-0 bg-black/50 text-white p-4 w-full">
-              {image.title && <h3 className="text-xl font-bold">{image.title}</h3>}
-              {image.description && <p className="text-sm">{image.description}</p>}
-            </div>
-          )}
         </div>
       ))}
 
@@ -92,14 +84,6 @@ export default function ImageCarousel({ images, interval = 7500 }: ImageCarousel
           <ChevronRight className="w-6 h-6" />
         </button>
       </div>
-
-      {/* Play/Pause toggle */}
-      <button
-        onClick={() => setIsPlaying((prev) => !prev)}
-        className="absolute z-30 top-4 right-4 bg-white/70 hover:bg-white text-black rounded-full p-2"
-      >
-        {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-      </button>
 
       {/* Dots */}
       <div className="absolute z-30 bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+
 export default function LoadingScreen() {
   const [visible, setVisible] = useState(false);
   const [fade, setFade] = useState(false);
