@@ -21,7 +21,7 @@ export default function Navbar() {
         </Link>
         {/* Desktop Links */}
         <div className="flex items-center space-x-6">
-          <NavLink href="/wheres-my-train">Where's My Train?</NavLink>
+          <NavLink href="/where-is-my-train">Where's My Train?</NavLink>
           <NavLink href="https://www.facebook.com/groups/1047823936706604">
             <Facebook className="w-6 h-6" />
           </NavLink>

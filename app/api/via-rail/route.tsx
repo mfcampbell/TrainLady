@@ -1,5 +1,4 @@
-// api/via-rail.ts
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { NextResponse } from "next/server";
 
 type Train = {
   id: string;
@@ -71,12 +70,15 @@ function parseTrain(raw: any): Train | null {
   }
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export async function GET() {
   try {
-    const response = await fetch(TSI_URL);
+    const response = await fetch(TSI_URL, { cache: "no-store" });
     if (!response.ok) {
       const text = await response.text().catch(() => "");
-      return res.status(502).json({ error: "Failed to fetch TSI", status: response.status, bodyPreview: text.slice(0, 512) });
+      return NextResponse.json(
+        { error: "Failed to fetch TSI", status: response.status, bodyPreview: text.slice(0, 512) },
+        { status: 502 }
+      );
     }
 
     const raw = await response.json();
@@ -86,17 +88,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       trains = raw.map(parseTrain).filter((t): t is Train => t !== null);
     } else if (typeof raw === "object" && raw !== null) {
       for (const [key, val] of Object.entries(raw)) {
-        const parsed = parseTrain({ ...val, id: key });
-        if (parsed) trains.push(parsed);
+        if (val && typeof val === "object") {
+          const parsed = parseTrain({ ...val, id: key });
+          if (parsed) trains.push(parsed);
+        }
       }
     }
 
     trains.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
 
-    res.setHeader("Cache-Control", "s-maxage=10, stale-while-revalidate=30");
-    res.status(200).json({ fetchedAt: new Date().toISOString(), count: trains.length, trains });
+    const res = NextResponse.json({
+      fetchedAt: new Date().toISOString(),
+      count: trains.length,
+      trains,
+    });
+
+    res.headers.set("Cache-Control", "s-maxage=10, stale-while-revalidate=30");
+
+    return res;
   } catch (err) {
     console.error("VIA TSI proxy error:", err);
-    res.status(500).json({ error: "Internal server error" });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

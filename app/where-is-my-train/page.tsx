@@ -1,11 +1,11 @@
-"use client"; // we need client-side rendering for useEffect
+"use client";
 
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-// Fix default marker icons (Leaflet requires this for Webpack/Next.js)
+// Fix default Leaflet marker icons for Next.js
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -30,7 +30,8 @@ export default function WheresMyTrainMap() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL = "https://train-lady-bk9e2tqs6-mfcampbells-projects.vercel.app/api/via-rail"; // replace with your Vercel API endpoint
+  // Use the App Router API
+  const API_URL = "/api/via-rail";
 
   useEffect(() => {
     const fetchTrains = async () => {
@@ -50,14 +51,11 @@ export default function WheresMyTrainMap() {
     };
 
     fetchTrains();
-
-    // Auto-refresh every 30s
-    const interval = setInterval(fetchTrains, 30000);
+    const interval = setInterval(fetchTrains, 30000); // refresh every 30s
     return () => clearInterval(interval);
   }, []);
 
-  // Default map center (Canada)
-  const center: [number, number] = [56, -106];
+  const center: [number, number] = [56, -106]; // default center (Canada)
 
   return (
     <div className="p-4 font-sans">
