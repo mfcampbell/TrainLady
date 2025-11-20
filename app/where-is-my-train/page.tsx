@@ -30,7 +30,7 @@ export default function WheresMyTrainMap() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL = "https://train-lady-bk9e2tqs6-mfcampbells-projects.vercel.appapi/via-rail"; // replace with your Vercel API endpoint
+  const API_URL = "https://train-lady-bk9e2tqs6-mfcampbells-projects.vercel.app/api/via-rail"; // replace with your Vercel API endpoint
 
   useEffect(() => {
     const fetchTrains = async () => {
