@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const res = await fetch("https://tsimobile.viarail.ca/data/allData.json", {
+    const res = await fetch("https://vercel.com/mfcampbells-projects/train-lady/api/via-rail", {
       headers: {
         "Content-Type": "application/json",
       },
