@@ -40,7 +40,7 @@ export default function FAQ() {
   };
 
   return (
-    <div className="mx-auto py-12">
+    <div className="mx-auto py-12 px-4">
       <div className="space-y-4">
         {faqs.map((faq, index) => (
           <div key={index} className="shadow-sm">

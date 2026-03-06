@@ -26,9 +26,9 @@ export default function EventCalendar() {
       const data = await res.json();
       const formatted = data.events.map((event: EventbriteEvent) => ({
         id: event.id,
-        title: event.name.text,
+        title: event.name.text, 
         start: event.start.local,
-        url: `/events/details?id=${event.id}`, // Link to your local route
+        url: `/events/details/${event.id}`, // Link to your local route
       }));
       setEvents(formatted);
     };

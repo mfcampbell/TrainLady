@@ -1,6 +1,5 @@
 // next.config.ts
 const nextConfig = {
-  output: 'export',
   images: { unoptimized: true },
   eslint: {
     ignoreDuringBuilds: true,
@@ -8,3 +7,4 @@ const nextConfig = {
 };
 
 export default nextConfig;
+

@@ -1,4 +1,3 @@
-// app/events/details/EventDetailsClient.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -17,43 +16,26 @@ type EventData = {
   start: { local: string };
   logo: {
     url: string;
-    original?: {
-      url: string;
-    };
+    original?: { url: string };
   } | null;
   capacity?: number;
-  venue_id: string;
+  venue?: {
+    address: { localized_address_display: string };
+    name: string;
+  };
   structured_content?: {
     modules?: {
       id: string;
       type: string;
-      data: {
-        body?: {
-          text: string;
-        };
-        image?: {
-          original: {
-            url: string;
-          };
-        };
-      };
+      data: { body?: { text: string }; image?: { original: { url: string } } };
     }[];
   };
-};
-
-type Venue = {
-  address: {
-    localized_address_display: string;
-  };
-  name: string;
 };
 
 type Ticket = {
   name: string;
   free: boolean;
-  cost?: {
-    display: string;
-  };
+  cost?: { display: string };
   on_sale_status: string;
   quantity_total?: number;
   quantity_sold?: number;
@@ -61,7 +43,6 @@ type Ticket = {
 
 export default function EventDetailsClient({ id }: { id?: string }) {
   const [event, setEvent] = useState<EventData | null>(null);
-  const [venue, setVenue] = useState<Venue | null>(null);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -69,44 +50,28 @@ export default function EventDetailsClient({ id }: { id?: string }) {
     tickets.length > 0 &&
     tickets.every((ticket) => ticket.on_sale_status === "SOLD_OUT");
 
+  // Fetch event details from your Vercel serverless function
   useEffect(() => {
     if (!id) return;
 
-    const fetchEventDetails = async () => {
+    const fetchEvent = async () => {
       try {
-        const [eventRes, ticketRes, structuredContentRes] = await Promise.all([
-          fetch(
-            `https://www.eventbriteapi.com/v3/events/${id}/?expand=venue&token=F4OV4MXVY5EVQK5T4HOX`
-          ),
-          fetch(
-            `https://www.eventbriteapi.com/v3/events/${id}/ticket_classes/?token=F4OV4MXVY5EVQK5T4HOX`
-          ),
-          fetch(
-            `https://www.eventbriteapi.com/v3/events/${id}/structured_content/?token=F4OV4MXVY5EVQK5T4HOX`
-          ),
-        ]);
-
-        if (!eventRes.ok || !ticketRes.ok || !structuredContentRes.ok) {
-          throw new Error("Failed to fetch");
-        }
-
-        const eventData = await eventRes.json();
-        const ticketData = await ticketRes.json();
-        const structuredContent = await structuredContentRes.json();
-
-        eventData.structured_content = structuredContent;
-        setEvent(eventData);
-        setVenue(eventData.venue || null);
-        setTickets(ticketData.ticket_classes || []);
-      } catch (err) {
-        console.error("Error fetching event details:", err);
-        setError("Unable to load event details.");
+        const res = await fetch(`/api/eventbrite/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch event details");
+        const data = await res.json();
+        setEvent(data.event);
+        setTickets(data.tickets ?? []);
+        setError(null);
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message || "Unable to load event details");
       }
     };
 
-    fetchEventDetails();
+    fetchEvent();
   }, [id]);
 
+  // Eventbrite widget
   useEffect(() => {
     if (!event || soldOut || !document.getElementById("custom-eventbrite-button"))
       return;
@@ -135,7 +100,7 @@ export default function EventDetailsClient({ id }: { id?: string }) {
   if (error) return <p className="text-red-500">{error}</p>;
   if (!event) return <p>Loading...</p>;
 
-  const fullAddress = venue?.address?.localized_address_display;
+  const fullAddress = event.venue?.address?.localized_address_display;
   const imageUrl = event.logo?.original?.url || event.logo?.url;
 
   return (
@@ -147,6 +112,7 @@ export default function EventDetailsClient({ id }: { id?: string }) {
           className="w-full max-h-[400px] object-cover rounded-md mb-6"
         />
       )}
+
       <h1
         className={`${playfairDisplay.className} antialiased text-4xl lg:text-6xl font-bold`}
       >
@@ -190,13 +156,12 @@ export default function EventDetailsClient({ id }: { id?: string }) {
           <h2 className="text-xl font-bold mb-2">Tickets</h2>
           <ul className="list-disc list-inside">
             {tickets.map((ticket) => {
-              const soldOut = ticket.on_sale_status === "SOLD_OUT";
+              const isSoldOut = ticket.on_sale_status === "SOLD_OUT";
               return (
                 <li key={ticket.name}>
-                  {ticket.name} —{" "}
-                  {ticket.free ? "Free" : ticket.cost?.display ?? "Price TBA"}{" "}
-                  {soldOut && <span className="ml-2">(Sold Out)</span>}
-                  {!soldOut &&
+                  {ticket.name} — {ticket.free ? "Free" : ticket.cost?.display ?? "Price TBA"}{" "}
+                  {isSoldOut && <span className="ml-2">(Sold Out)</span>}
+                  {!isSoldOut &&
                     ticket.quantity_total != null &&
                     ticket.quantity_sold != null && (
                       <span className="ml-2">
@@ -210,33 +175,28 @@ export default function EventDetailsClient({ id }: { id?: string }) {
         </div>
       )}
 
-      {venue && (
+      {fullAddress && (
         <div className="mb-12">
           <h2 className="text-xl font-bold mb-2">Location</h2>
           <p className="mb-4">{fullAddress}</p>
-          {fullAddress && (
-            <>
-              <iframe
-                title="Venue Map"
-                className="w-full h-64 rounded border mb-2"
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
-                src={`https://www.google.com/maps?q=${encodeURIComponent(
-                  fullAddress
-                )}&output=embed`}
-              ></iframe>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  fullAddress
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Open in Google Maps →
-              </a>
-            </>
-          )}
+          <iframe
+            title="Venue Map"
+            className="w-full h-64 rounded border mb-2"
+            loading="lazy"
+            allowFullScreen
+            referrerPolicy="no-referrer-when-downgrade"
+            src={`https://www.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed`}
+          ></iframe>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              fullAddress
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open in Google Maps →
+          </a>
+
           <div>
             <button
               id="custom-eventbrite-button"
@@ -252,18 +212,18 @@ export default function EventDetailsClient({ id }: { id?: string }) {
           </div>
         </div>
       )}
-       <section className="questions section pb-12">
-                  <div className="md:container md:mx-auto">
-                    <h2
-                      className={`${playfairDisplay.className} antialiased text-4xl lg:text-6xl font-bold text-center mb-10`}
-                    >
-                      Frequently Asked Questions
-                    </h2>
-                    <div className="faq">
-                      <FAQ />
-                    </div>
-                  </div>
-                </section>
+
+      <section className="questions section pb-12">
+        <div className="md:container md:mx-auto">
+          <h2
+            className={`${playfairDisplay.className} antialiased text-4xl lg:text-6xl font-bold text-center mb-10`}
+          >
+            Frequently Asked Questions
+          </h2>
+          <FAQ />
+        </div>
+      </section>
+
       <div id="eventbrite-widget-container" className="mt-8" />
     </div>
   );

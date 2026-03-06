@@ -2,28 +2,33 @@
 
 import { useEffect, useState } from 'react';
 
-
-export default function LoadingScreen() {
-  const [visible, setVisible] = useState(false);
+export default function LoadingScreen({ onDone }: { onDone?: () => void }) {
+  const [visible, setVisible] = useState(true);
   const [fade, setFade] = useState(false);
 
   useEffect(() => {
-    const lastVisit = localStorage.getItem('lastVisit');
-    const now = new Date().getTime();
+    // sessionStorage persists only for the current browser tab
+    const hasVisited = sessionStorage.getItem('visited');
 
-    // Check if it's been more than 24 hours
-    if (!lastVisit || now - parseInt(lastVisit) > 24 * 60 * 60 * 1000) {
-      setVisible(true);
-      localStorage.setItem('lastVisit', now.toString());
-
-      const fadeTimer = setTimeout(() => setFade(true), 3000);
-      const hideTimer = setTimeout(() => setVisible(false), 4000);
-
-      return () => {
-        clearTimeout(fadeTimer);
-        clearTimeout(hideTimer);
-      };
+    if (hasVisited) {
+      // Skip loading screen, reveal immediately
+      setVisible(false);
+      onDone?.();
+      return;
     }
+
+    sessionStorage.setItem('visited', 'true');
+
+    const fadeTimer = setTimeout(() => setFade(true), 5000);
+    const hideTimer = setTimeout(() => {
+      setVisible(false);
+      onDone?.();
+    }, 3500);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(hideTimer);
+    };
   }, []);
 
   if (!visible) return null;
@@ -35,7 +40,7 @@ export default function LoadingScreen() {
       }`}
     >
       <img
-        src="images/trainlady-paint-01.svg"
+        src="/images/trainlady-paint-01.svg"
         alt="Loading..."
         className="h-96"
       />
