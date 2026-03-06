@@ -1,6 +1,5 @@
 // next.config.ts
 const nextConfig = {
-  images: { unoptimized: true },
   eslint: {
     ignoreDuringBuilds: true,
   },
