@@ -36,6 +36,7 @@ export type Train = {
   latitude: number | null;
   longitude: number | null;
   speedKph: number | null;
+  direction?: number | null;
   extra?: {
     from?: string;
     to?: string;
@@ -180,7 +181,7 @@ function LoadingOverlay({ fadingOut }: { fadingOut: boolean }) {
         alignItems: "center",
         justifyContent: "center",
         gap: 16,
-        zIndex: 10,
+        zIndex: 1000,
         fontSize: "1.1rem",
         fontWeight: 600,
         color: "#374151",
@@ -240,19 +241,27 @@ export default function TrainMap({ initialTrains }: Props) {
 
   /* =========================
      ICONS
+     The SVG faces right (90°) by default, so we subtract 90° from the
+     bearing to align it with north-up, then add the train's direction.
   ========================= */
-  const greenIcon = new L.Icon({
-    iconUrl: "/images/icons/train-map-icon.svg",
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-    popupAnchor: [0, -40],
-  });
-  const redIcon = new L.Icon({
-    iconUrl: "/images/icons/train-map-icon.svg",
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-    popupAnchor: [0, -40],
-  });
+  const makeIcon = useCallback((direction: number | null | undefined) => {
+    const rotation = (direction ?? 0) - 90;
+    return new L.DivIcon({
+      className: "",
+      iconSize: [40, 40],
+      iconAnchor: [20, 40],
+      popupAnchor: [0, -40],
+      html: `<img
+        src="/images/icons/train-map-icon.svg"
+        style="
+          width: 40px;
+          height: 40px;
+          transform: rotate(${rotation}deg);
+          transform-origin: center center;
+        "
+      />`,
+    });
+  }, []);
 
   /* =========================
      AUTO-ZOOM
@@ -373,7 +382,7 @@ export default function TrainMap({ initialTrains }: Props) {
      RENDER
   ========================= */
   return (
-    <div style={{ height: "800px", width: "100%", position: "relative", zIndex: "1", padding: "20px" }}>
+    <div style={{ height: "800px", width: "100%", position: "relative" }}>
       <MapContainer
         center={[53.9171, -122.7497]}
         zoom={8}
@@ -417,9 +426,7 @@ export default function TrainMap({ initialTrains }: Props) {
 
               <Marker
                 position={[train.displayLat, train.displayLng]}
-                icon={
-                  train.speedKph && train.speedKph > 100 ? redIcon : greenIcon
-                }
+                icon={makeIcon(train.direction)}
               >
                 <Popup>
                   <div style={{ minWidth: 230 }}>
@@ -481,8 +488,8 @@ export default function TrainMap({ initialTrains }: Props) {
           title="Re-centre map"
           style={{
             position: "absolute",
-            bottom: 30,
-            right: 30,
+            bottom: 32,
+            right: 12,
             zIndex: 1000,
             background: "white",
             border: "2px solid rgba(0,0,0,0.2)",

@@ -19,7 +19,7 @@ export default function LoadingScreen({ onDone }: { onDone?: () => void }) {
 
     sessionStorage.setItem('visited', 'true');
 
-    const fadeTimer = setTimeout(() => setFade(true), 5000);
+    const fadeTimer = setTimeout(() => setFade(true), 3500);
     const hideTimer = setTimeout(() => {
       setVisible(false);
       onDone?.();
