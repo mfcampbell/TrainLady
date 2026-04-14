@@ -35,15 +35,25 @@ export default function LoadingScreen({ onDone }: { onDone?: () => void }) {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-1000 ${
+      className={`fixed inset-0 flex items-center justify-center flex-col bg-white transition-opacity duration-1000 ${
         fade ? 'opacity-0' : 'opacity-100'
       }`}
+
+      style={{
+            zIndex: 1001,
+      }}
+    
     >
       <img
         src="/images/trainlady-paint-01.svg"
         alt="Loading..."
         className="h-96"
       />
+
+      {/* Progress bar */}
+  <div className="w-64 h-1 bg-gray-200 overflow-hidden rounded">
+    <div className="h-full bg-black animate-loading-bar" />
+  </div>
     </div>
   );
 }

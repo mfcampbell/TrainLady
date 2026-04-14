@@ -47,6 +47,12 @@ export default function HomePage() {
       description:
         "Listen to stories from locals as we visit historic stops along the routes",
     },
+     {
+      src: "/images/slide6.jpg",
+      title: "Local Art Showcase",
+      description:
+        "A winter wonderland awaits as we explore the historic train routes in the colder months",
+    },
   ];
   return (
     <>

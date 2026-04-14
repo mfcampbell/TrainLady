@@ -231,6 +231,7 @@ export default function TrainMap({ initialTrains }: Props) {
   // Stays true until the map is ready AND fitBounds has been called
   const [isLoading, setIsLoading] = useState(true);
   const [isFadingOut, setIsFadingOut] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
 
   const animTrainsRef = useRef<TrainAnim[]>(animTrains);
   animTrainsRef.current = animTrains;
@@ -241,11 +242,11 @@ export default function TrainMap({ initialTrains }: Props) {
 
   /* =========================
      ICONS
-     The SVG faces right (90°) by default, so we subtract 90° from the
-     bearing to align it with north-up, then add the train's direction.
+     The SVG faces right (east) by default. We flip it horizontally
+     when the train is heading west (bearing 180°–360°).
   ========================= */
   const makeIcon = useCallback((direction: number | null | undefined) => {
-    const rotation = (direction ?? 0) - 90;
+    const facingWest = direction != null && direction > 180;
     return new L.DivIcon({
       className: "",
       iconSize: [40, 40],
@@ -256,7 +257,7 @@ export default function TrainMap({ initialTrains }: Props) {
         style="
           width: 40px;
           height: 40px;
-          transform: rotate(${rotation}deg);
+          transform: scaleX(${facingWest ? -1 : 1});
           transform-origin: center center;
         "
       />`,
@@ -364,6 +365,7 @@ export default function TrainMap({ initialTrains }: Props) {
           })),
         );
 
+        setHasFetched(true);
         return updated;
       });
     };
@@ -511,8 +513,8 @@ export default function TrainMap({ initialTrains }: Props) {
       {/* Loading overlay — dismissed only after map is ready and fitBounds has fired */}
       {isLoading && <LoadingOverlay fadingOut={isFadingOut} />}
 
-      {/* No-trains overlay — shown only after loading completes */}
-      {!isLoading && animTrains.length === 0 && (
+      {/* No-trains overlay — shown only after loading completes AND first poll has returned */}
+      {!isLoading && hasFetched && animTrains.length === 0 && (
         <div
           style={{
             position: "absolute",
@@ -524,6 +526,7 @@ export default function TrainMap({ initialTrains }: Props) {
             fontSize: "1.5rem",
             fontWeight: "bold",
             textAlign: "center",
+            zIndex: 999,
           }}
         >
           🚆 No trains are currently operating.

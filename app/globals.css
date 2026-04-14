@@ -25,6 +25,7 @@ body {
 .navbar {
   background: var(--background);
   color: var(--foreground);
+  z-index: 1000;
 }
 
 .fc-view {
@@ -110,4 +111,17 @@ body {
     font-size: 1rem;
     margin: 0px;
     font-weight: bold;
+}
+
+@keyframes loadingBar {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.animate-loading-bar {
+  animation: loadingBar 3.5s linear forwards;
 }
