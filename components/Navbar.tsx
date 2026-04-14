@@ -11,7 +11,7 @@ export default function Navbar() {
   const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
-    <nav className="shadow-md relative md:fixed w-full bg-white navbar ">
+    <nav className="shadow-md relative md:fixed w-full bg-white navbar " style={{ zIndex: 1000 }}>
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between relative z-60 h-68px">
         {/* Logo */}
         <Link href="/" className="text-2xl font-bold text-blue-600">
