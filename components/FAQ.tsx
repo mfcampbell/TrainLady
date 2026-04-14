@@ -8,7 +8,7 @@ const faqs = [
   {
     question: "Where do we meet?",
     answer:
-      "We meet at the VIA rail station in Prince George, BC. The address is 123 Main St, Prince George, BC V2L 1A1.",
+      "We meet at the VIA rail station in Prince George, BC. The address is 1300 - 1st Avenue, Prince George, BC V2L2Y7.",
   },
    {
     question: "What time should I arrive?",
