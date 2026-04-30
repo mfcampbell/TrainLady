@@ -526,7 +526,6 @@ export default function TrainMap({ initialTrains }: Props) {
             fontSize: "1.5rem",
             fontWeight: "bold",
             textAlign: "center",
-            zIndex: 999,
           }}
         >
           🚆 No trains are currently operating.
