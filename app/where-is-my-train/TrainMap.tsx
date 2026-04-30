@@ -36,7 +36,6 @@ export type Train = {
   latitude: number | null;
   longitude: number | null;
   speedKph: number | null;
-  direction?: number | null;
   extra?: {
     from?: string;
     to?: string;
@@ -245,24 +244,20 @@ export default function TrainMap({ initialTrains }: Props) {
      The SVG faces right (east) by default. We flip it horizontally
      when the train is heading west (bearing 180°–360°).
   ========================= */
-  const makeIcon = useCallback((direction: number | null | undefined) => {
-    const facingWest = direction != null && direction > 180;
-    return new L.DivIcon({
+  const icon = useRef(
+    new L.DivIcon({
       className: "",
       iconSize: [40, 40],
       iconAnchor: [20, 40],
       popupAnchor: [0, -40],
-      html: `<img
-        src="/images/icons/train-map-icon.svg"
-        style="
-          width: 40px;
-          height: 40px;
-          transform: scaleX(${facingWest ? -1 : 1});
-          transform-origin: center center;
-        "
-      />`,
-    });
-  }, []);
+      html: `<div style="width:40px;height:40px;pointer-events:auto;">
+        <img
+          src="/images/icons/train-map-icon.svg"
+          style="width:40px;height:40px;pointer-events:auto;"
+        />
+      </div>`,
+    }),
+  ).current;
 
   /* =========================
      AUTO-ZOOM
@@ -428,7 +423,7 @@ export default function TrainMap({ initialTrains }: Props) {
 
               <Marker
                 position={[train.displayLat, train.displayLng]}
-                icon={makeIcon(train.direction)}
+                icon={icon}
               >
                 <Popup>
                   <div style={{ minWidth: 230 }}>
