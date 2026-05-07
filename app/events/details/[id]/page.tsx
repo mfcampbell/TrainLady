@@ -31,6 +31,13 @@ type EventData = {
     quantity_total?: number;
     quantity_sold?: number;
   }[];
+  structured_content?: {
+    modules?: {
+      id: string;
+      type: string;
+      data: { body?: { text: string }; image?: { original: { url: string } } };
+    }[];
+  };
 };
 
 export default async function EventDetailsPage({
@@ -56,12 +63,16 @@ export default async function EventDetailsPage({
     );
   }
 
-  const [eventRes, ticketsRes] = await Promise.all([
+  const [eventRes, ticketsRes, descriptionRes] = await Promise.all([
     fetch(`https://www.eventbriteapi.com/v3/events/${id}/?expand=venue`, {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     }),
     fetch(`https://www.eventbriteapi.com/v3/events/${id}/ticket_classes/`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    }),
+    fetch(`https://www.eventbriteapi.com/v3/events/${id}/description/`, {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     }),
@@ -75,6 +86,11 @@ export default async function EventDetailsPage({
     );
   }
   const eventData = await eventRes.json();
+  console.log(
+    "structured_content:",
+    JSON.stringify(eventData.structured_content, null, 2),
+  );
+
   const ticketsData = await ticketsRes.json();
 
   const event: EventData = {
@@ -82,10 +98,18 @@ export default async function EventDetailsPage({
     tickets: ticketsData.ticket_classes,
   };
 
+  const descriptionData = descriptionRes.ok
+    ? await descriptionRes.json()
+    : null;
+  console.log(
+    "description endpoint:",
+    JSON.stringify(descriptionData, null, 2),
+  );
+
   const fullAddress = event.venue?.address?.localized_address_display;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
+    <div className="max-w-4xl mx-auto px-4 py-12 test">
       {/* Event Image */}
       {event.logo?.url && (
         <img
@@ -124,12 +148,35 @@ export default async function EventDetailsPage({
             </span>{" "}
             {fullAddress}
           </p>
-          {/* Description */}
-          {event.description?.html && (
-            <div
-              className="prose mb-6 max-w-none"
-              dangerouslySetInnerHTML={{ __html: event.description.html }}
-            />
+          {descriptionData?.modules?.length > 0 && (
+            <div className="prose mb-6 max-w-none">
+              {descriptionData.modules.map((module: any) => {
+                if (module.type === "text" && module.data?.body?.text) {
+                  return (
+                    <div
+                      key={module.id}
+                      dangerouslySetInnerHTML={{
+                        __html: module.data.body.text,
+                      }}
+                    />
+                  );
+                }
+                if (
+                  module.type === "image" &&
+                  module.data?.image?.original?.url
+                ) {
+                  return (
+                    <img
+                      key={module.id}
+                      src={module.data.image.original.url}
+                      alt=""
+                      className="my-4 rounded"
+                    />
+                  );
+                }
+                return null;
+              })}
+            </div>
           )}
         </div>
         <div className="col-span-3 md:col-span-1">
@@ -152,12 +199,12 @@ export default async function EventDetailsPage({
                           ticket.quantity_total != null &&
                           ticket.quantity_sold != null && (
                             <span>
-                              <br />
-                              ({ticket.quantity_total - ticket.quantity_sold}{" "}
+                              <br />(
+                              {ticket.quantity_total - ticket.quantity_sold}{" "}
                               remaining)
                             </span>
                           )}
-                          <br />
+                        <br />
                         {new Date(event.start.local).toLocaleDateString(
                           "en-CA",
                           {
@@ -180,7 +227,15 @@ export default async function EventDetailsPage({
           </div>
         </div>
       </div>
-
+      {/* Description*/}
+      {descriptionData?.description && (
+        <div className="grid grid-cols-12">
+          <div
+            className="prose max-w-none col-span-12 lg:col-span-8"
+            dangerouslySetInnerHTML={{ __html: descriptionData.description }}
+          />
+        </div>
+      )}
       {/* Venue */}
       {fullAddress && (
         <div className="py-12">

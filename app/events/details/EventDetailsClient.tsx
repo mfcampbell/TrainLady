@@ -175,6 +175,21 @@ export default function EventDetailsClient({ id }: { id?: string }) {
         </div>
       )}
 
+       {/* Description */}
+          {descriptionData?.modules?.length > 0 && (
+  <div className="prose mb-12 max-w-none">
+    {descriptionData.modules.map((module: any) => {
+      if (module.type === "text" && module.data?.body?.text) {
+        return <div key={module.id} dangerouslySetInnerHTML={{ __html: module.data.body.text }} />;
+      }
+      if (module.type === "image" && module.data?.image?.original?.url) {
+        return <img key={module.id} src={module.data.image.original.url} alt="" className="my-4 rounded" />;
+      }
+      return null;
+    })}
+  </div>
+)}
+
       {fullAddress && (
         <div className="mb-12">
           <h2 className="text-xl font-bold mb-2">Location</h2>
