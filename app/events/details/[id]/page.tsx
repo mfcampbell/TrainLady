@@ -85,28 +85,26 @@ export default async function EventDetailsPage({
       </p>
     );
   }
+
+  
   const eventData = await eventRes.json();
-  console.log(
-    "structured_content:",
-    JSON.stringify(eventData.structured_content, null, 2),
-  );
 
   const ticketsData = await ticketsRes.json();
+
+  let descriptionData: { description?: string } | null = null;
+if (descriptionRes.ok) {
+  descriptionData = await descriptionRes.json();
+}
+
 
   const event: EventData = {
     ...eventData,
     tickets: ticketsData.ticket_classes,
   };
 
-  const descriptionData = descriptionRes.ok
-    ? await descriptionRes.json()
-    : null;
-  console.log(
-    "description endpoint:",
-    JSON.stringify(descriptionData, null, 2),
-  );
+ const fullAddress = event.venue?.address?.localized_address_display;
 
-  const fullAddress = event.venue?.address?.localized_address_display;
+  
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 test">
@@ -148,36 +146,6 @@ export default async function EventDetailsPage({
             </span>{" "}
             {fullAddress}
           </p>
-          {descriptionData?.modules?.length > 0 && (
-            <div className="prose mb-6 max-w-none">
-              {descriptionData.modules.map((module: any) => {
-                if (module.type === "text" && module.data?.body?.text) {
-                  return (
-                    <div
-                      key={module.id}
-                      dangerouslySetInnerHTML={{
-                        __html: module.data.body.text,
-                      }}
-                    />
-                  );
-                }
-                if (
-                  module.type === "image" &&
-                  module.data?.image?.original?.url
-                ) {
-                  return (
-                    <img
-                      key={module.id}
-                      src={module.data.image.original.url}
-                      alt=""
-                      className="my-4 rounded"
-                    />
-                  );
-                }
-                return null;
-              })}
-            </div>
-          )}
         </div>
         <div className="col-span-3 md:col-span-1">
           <div className="shadow-md bg-white rounded-md overflow-hidden p-4">
