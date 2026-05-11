@@ -23,7 +23,7 @@ const faqs = [
   {
     question: "What should I bring on the trip?",
     answer:
-      "We recommend bringing comfortable and weather-appropriate clothing, a camera for capturing beautiful moments, personal items, and any necessary medications. Light snacks and drinks. Don’t forget to pack a sense of adventure!",
+      "We recommend bringing comfortable and weather-appropriate clothing, and a camera for capturing beautiful moments. Light snacks and drinks. Don’t forget to pack a sense of adventure!",
   },
   {
     question: "How do we get back to our vehicles?",
