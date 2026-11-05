@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       warnings?: { message: string }[];
     } }>(`mutation Checkout($input: CartInput!) {
       cartCreate(input: $input) { cart { checkoutUrl } userErrors { message } warnings { message } }
-    }`, { input: { lines: lines.map(({ merchandiseId, quantity }) => ({ merchandiseId, quantity })) } });
+    }`, { input: { buyerIdentity: { countryCode: "CA" }, lines: lines.map(({ merchandiseId, quantity }) => ({ merchandiseId, quantity })) } });
     const result = data.cartCreate;
     if (result.userErrors.length || result.warnings?.length || !result.cart) {
       return NextResponse.json({ error: [...result.userErrors, ...(result.warnings ?? [])].map(e => e.message).join(" ") || "Unable to create checkout." }, { status: 422 });

@@ -76,7 +76,7 @@ export default function CartOverlay() {
               const quantity = Number(e.target.value);
               if (Number.isInteger(quantity) && quantity >= 1 && quantity <= 99) setCart(current => current.map(item => item.variant.id === line.variant.id ? { ...item, quantity } : item));
             }} /></label>
-            <span>{money(Number(line.variant.price.amount) * line.quantity, line.variant.price.currencyCode)}</span>
+            <span>{money(Number(line.variant.price.amount) * line.quantity, line.variant.price.currencyCode)} {line.variant.price.currencyCode}</span>
             <button disabled={busy} className="underline" aria-label={`Remove ${line.title}, ${line.variant.title}`} onClick={() => setCart(current => current.filter(item => item.variant.id !== line.variant.id))}>Remove</button>
           </li>)}</ul>
           <div aria-live="polite" className="font-bold my-4">{[...new Set(cart.map(line => line.variant.price.currencyCode))].map(currency => <p key={currency}>Subtotal: {money(cart.filter(line => line.variant.price.currencyCode === currency).reduce((sum, line) => sum + Number(line.variant.price.amount) * line.quantity, 0), currency)} {currency}</p>)}</div>

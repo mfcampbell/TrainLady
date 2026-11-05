@@ -5,7 +5,7 @@ export async function GET(request: Request) {
   const after = new URL(request.url).searchParams.get("after");
   if (!shopifyConfigured()) return NextResponse.json({ products: [], configured: false });
   try {
-    const data = await shopify<{ collection: { products: { nodes: ShopProduct[]; pageInfo: { hasNextPage: boolean; endCursor: string | null } } } | null }>(`query Products($after: String) {
+    const data = await shopify<{ collection: { products: { nodes: ShopProduct[]; pageInfo: { hasNextPage: boolean; endCursor: string | null } } } | null }>(`query Products($after: String) @inContext(country: CA) {
       collection(handle: "apparel") {
       products(first: 3, after: $after, sortKey: TITLE) { pageInfo { hasNextPage endCursor } nodes {
         id title description featuredImage { url altText }

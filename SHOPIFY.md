@@ -23,7 +23,9 @@ initially displaying three published products. Publish the collection and its
 products to the connected storefront in Shopify. The Load more button
 fetches the next three products and disappears when all products have loaded. Each
 product includes up to 100 variants. The cart is shared across pages through the root CartProvider and resets on page reload. Navigation shows a badge with the total item quantity and opens a cart overlay on any page. Adding a product also opens the overlay. Checkout creates
-an up-to-date Shopify cart and redirects to Shopify's hosted checkout. Shopify
+an up-to-date Shopify cart and redirects to Shopify's hosted checkout. Product queries use Canada (`@inContext(country: CA)`), and checkout carts use
+`buyerIdentity.countryCode: CA` so Shopify applies Canadian market pricing. Configure
+the Canada market to use CAD in Shopify. Prices display the returned currency code. Shopify
 validates availability and calculates final prices, shipping, and taxes. Product
 and checkout requests stay on the Next.js server. API version: `2026-01`.
 
