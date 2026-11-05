@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Mail, Facebook, House, Menu, X } from "lucide-react";
+import { Mail, Facebook, House, Menu, X, ShoppingCart } from "lucide-react";
 import Image from "next/image";
+import { useCart } from "@/components/CartProvider";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,7 +26,9 @@ export default function Navbar() {
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center space-x-6">
-          <NavLink href="/where-is-my-train">Where's My Train?</NavLink>
+          <NavLink href="/#shop">Merch</NavLink>
+          <CartLink />
+          <NavLink href="/where-is-my-train">Where&apos;s My Train?</NavLink>
 
           <NavLink href="https://www.facebook.com/groups/1047823936706604">
             <Facebook className="w-6 h-6" />
@@ -38,6 +41,8 @@ export default function Navbar() {
             <Mail className="w-6 h-6 inline-block" /> <span>Get in Touch</span>
           </a>
         </div>
+
+        <div className="md:hidden ml-auto mr-4"><CartLink /></div>
 
         {/* Mobile Hamburger Button */}
         <button
@@ -59,8 +64,10 @@ export default function Navbar() {
             Home
           </NavLink>
 
+          <NavLink href="/#shop" onClick={toggleMenu}>Merch</NavLink>
+
           <NavLink href="/where-is-my-train" onClick={toggleMenu}>
-            Where's My Train?
+            Where&apos;s My Train?
           </NavLink>
 
           <NavLink
@@ -98,5 +105,16 @@ function NavLink({
     <Link href={href} onClick={onClick} className="block transition-colors">
       {children}
     </Link>
+  );
+}
+
+function CartLink() {
+  const { itemCount, isOpen, setIsOpen } = useCart();
+  return (
+    <button type="button" onClick={() => setIsOpen(true)} aria-haspopup="dialog" aria-controls="cart-overlay" aria-expanded={isOpen} aria-label={`Shopping cart, ${itemCount} ${itemCount === 1 ? "item" : "items"}`} className="relative inline-flex items-center rounded p-2 text-[#1c1c1c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--green)]">
+      <ShoppingCart aria-hidden="true" className="h-6 w-6" />
+      {itemCount > 0 && <span aria-hidden="true" className="absolute -right-2 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--green)] px-1 text-xs font-bold text-[var(--butter)]">{itemCount > 99 ? "99+" : itemCount}</span>}
+      <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">{itemCount} {itemCount === 1 ? "item" : "items"} in your cart</span>
+    </button>
   );
 }

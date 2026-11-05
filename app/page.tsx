@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import Shop from "@/components/Shop";
 import Events from "@/components/Events";
 import EventCalendar from "@/components/EventCalendar";
 import ImageCarousel from "@/components/ImageCarousel";
@@ -129,6 +130,20 @@ export default function HomePage() {
                 </h2>
                 <div className="faq">
                   <FAQ />
+                </div>
+              </div>
+            </section>
+          </FadeIn>
+          <FadeIn>
+             <section className="questions section py-12 pb-12 bg-leaf">
+              <div className="md:container md:mx-auto">
+                <h2
+                  className={`${playfairDisplay.className} antialiased text-4xl lg:text-6xl font-bold text-center mb-10`}
+                >
+                  Merch
+                </h2>
+                <div className="merch">
+                  <Shop />
                 </div>
               </div>
             </section>

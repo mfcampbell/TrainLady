@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
+import CartProvider from "@/components/CartProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
@@ -27,12 +28,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${openSans.variable} antialiased min-h-screen flex flex-col`}>
+        <CartProvider>
         <Navbar />
         <main className="flex-grow md:pt-16">
           {children}
         </main>
         <Footer />
         <BackToTop />
+        </CartProvider>
       </body>
     </html>
   );
